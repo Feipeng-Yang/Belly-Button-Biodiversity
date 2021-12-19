@@ -52,7 +52,6 @@ function DrawBubbleChart(sampleId) {
                 colorscale: "Portland"
               },
             text: otu_labels
-
         };
         let bubbleArray = [barData];
         let bubbleLayout = {
@@ -107,7 +106,6 @@ function DrawGaugeChart(sampleId) {
         
         let layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
 
-
         Plotly.newPlot("gauge", sampdata, layout);
     });
 }
@@ -115,17 +113,11 @@ function DrawGaugeChart(sampleId) {
 function optionChanged(id) {
     console.log(`optionChanged (${id})`);
 
-    // Display the barChart
     DrawBarChart(id);
-
     DrawBubbleChart(id);
-
     DrawGaugeChart(id);
-
     ShowMetaData(id);
-    // Display the bubbleChart
 
-    // Populate demographic infor
 }
 
 
