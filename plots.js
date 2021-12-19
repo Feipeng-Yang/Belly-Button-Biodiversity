@@ -1,6 +1,5 @@
+// This code is partly taken from Dom's office hour section on Dec 11. 
 console.log("This is plots.js..");
-
-// This code is taken from Dom's office hour section on Dec 11. 
 
 function DrawBarChart(sampleId) {
     console.log(`DrawBarChart (${sampleId})`);
@@ -34,11 +33,11 @@ function DrawBarChart(sampleId) {
 function DrawBubbleChart(sampleId) {
     console.log(`DrawBubbleChart (${sampleId})`);
     d3.json("samples.json").then(data => {
-        // console.log(data);
+        console.log(data);
         let samples = data.samples;
         let resultArray = samples.filter(s => s.id ===sampleId);
         let result = resultArray[0];
-        console.log(result);
+        // console.log(result);
         let otu_ids = result.otu_ids;
         let otu_labels = result.otu_labels;
         let sample_values = result.sample_values;
@@ -55,20 +54,63 @@ function DrawBubbleChart(sampleId) {
             text: otu_labels
 
         };
-        let barArray = [barData];
-        let barLayout = {
+        let bubbleArray = [barData];
+        let bubbleLayout = {
             title: "Bacteria Cultures Per Sample",
             margin: {t: 30, l: 30}
         }
-        Plotly.newPlot("bubble", barArray, barLayout);
+        Plotly.newPlot("bubble", bubbleArray, bubbleLayout);
     });
 }
 
+
 function ShowMetaData(sampleId) {
     console.log(`ShowMetaData (${sampleId})`);
+    d3.json("samples.json").then(data => {
+        let metadata  = data.metadata;
+        // console.log(metadata);
+        let metaArray = metadata.filter(m => m.id === parseInt(sampleId));
+        let result = metaArray[0];
+        let demoArray = Object.entries(result);
+        console.log(demoArray);
+        let selector = d3.select("#sample-metadata");
+        selector.html("");
+        demoArray.forEach(([key,value]) => {
+            selector.append("p")
+                .text(`${key}:${value}`);
+        });
+    });
 }
 
 
+function DrawGaugeChart(sampleId) {
+    console.log(`DrawGaugeChart (${sampleId})`);
+    d3.json("samples.json").then(data => {
+        // console.log(data);
+        let metadata  = data.metadata;
+        // console.log(metadata);
+        let metaArray = metadata.filter(m => m.id === parseInt(sampleId));
+        let result = metaArray[0];
+
+        let sampdata = [
+            {
+                domain: { x: [0, 1], y: [0, 1] },
+                value: result.wfreq,
+                title: { text: "Belly Button Washing Frequency" },
+                type: "indicator",
+                mode: "gauge+number",
+                gauge: {
+                    axis: { range: [null, 9] }
+                  }
+            }
+        ];
+        
+        let layout = { width: 600, height: 500, margin: { t: 0, b: 0 } };
+
+
+        Plotly.newPlot("gauge", sampdata, layout);
+    });
+}
 
 function optionChanged(id) {
     console.log(`optionChanged (${id})`);
@@ -77,6 +119,8 @@ function optionChanged(id) {
     DrawBarChart(id);
 
     DrawBubbleChart(id);
+
+    DrawGaugeChart(id);
 
     ShowMetaData(id);
     // Display the bubbleChart
@@ -108,6 +152,7 @@ function InitDashboard()
 
         DrawBarChart(sampleId);
         DrawBubbleChart(sampleId);
+        DrawGaugeChart(sampleId);
         ShowMetaData(sampleId);
 
 
